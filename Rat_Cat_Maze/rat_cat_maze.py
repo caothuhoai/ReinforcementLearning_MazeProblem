@@ -91,13 +91,12 @@ maze10 = np.array([
     [ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  0.,  1.,  1.]
 ])
 
-#create Cat() class that chases the Rat(), use the __sub__ operator to get the relative position of the rat, which is the obs of Cat()
+
 
 class Rat:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        #elf.target = target
         self.visited_cells = []
 
     def __str__(self):
@@ -188,8 +187,6 @@ for ep in range(NUM_EPISODES):
         print(f"on #{ep}, epsilon is {epsilon}")
         print(f"{SHOW_EVERY} ep mean: {np.mean(episode_rewards[-SHOW_EVERY:])}")
         print(f"#times getting caught: {Ntimes_caught}. #times getting cheese: {Ntimes_get_cheese}")
-        #print(len(rat.visited_cells))
-        #print(list(set(rat.visited_cells)))
         show = True
     else:
         show = False
@@ -197,26 +194,9 @@ for ep in range(NUM_EPISODES):
     episode_reward = 0
     for i in range(200):
         obs = (rat - cheese, rat - cat)
-        #two_step_obs = [(rat.x-1,rat.y),(rat.x+1, rat.y),(rat.x, rat.y-1),(rat.x, rat.y+1)]
         if np.random.random() > epsilon:
             #one-step lookahead:
             action = np.argmax(q_table[obs])
-
-            #2-step-lookhead:
-            #rewards = dict(zip(np.argmax(np.argmax(q_table[one_step_obs]), [rat.get_reward(obs[0],obs[1]) for obs in two_step_obs])))
-            #max_reward = [key for key in rewards.keys() if rewards[key] == max(rewards.values())]
-            #action = random.choice(max_reward)
-
-            #two_step_actions = []
-            #max_action = 0
-            #for obs in two_step_obs:
-
-        
-                #two_step_actions.append(q_table[obs])
-            #    m_action = np.argmax(q_table[obs])
-            #    if m_action > max_action:
-            #        max_action = m_action
-        
 
         else:
             action = np.random.randint(0,4)
@@ -241,8 +221,6 @@ for ep in range(NUM_EPISODES):
         q_table[obs][action] = new_q
 
         if show:
-            #print(len(rat.visited_cells))
-            #print(list(set(rat.visited_cells)))
             env = np.zeros((SIZE, SIZE, 3), dtype=np.uint8)  # starts an rbg of our size
             env[rat.x][rat.y] = d[RAT_]  # sets the rat location tile to blue color
             env[cheese.x][cheese.y] = d[CHESSE_]  # sets the cheese tile to green
@@ -250,7 +228,7 @@ for ep in range(NUM_EPISODES):
             for wall in WALL_LOCATION:                  #set wall to red
                 env[wall[0]][wall[1]] = d[WALL_]
 
-            img = Image.fromarray(env, 'RGB')  # reading to rgb. Apparently
+            img = Image.fromarray(env, 'RGB')  # reading to rgb
             img = img.resize((400, 400), resample=Image.NEAREST)  # resizing
             cv2.imshow("image", np.array(img))
             if reward == CHEESE_REWARD or reward == CAUGHT_PENALTY:
@@ -267,9 +245,7 @@ for ep in range(NUM_EPISODES):
         elif reward == CAUGHT_PENALTY:
             Ntimes_caught += 1
             break
-    #rat.reset()
 
-    #print(episode_reward)
     episode_rewards.append(episode_reward)
     #without EPS_DECAY, the rewards don't increase very much later in the training.
     #with EPS_DECAY, the rewards increase steadily toward the end of training.
